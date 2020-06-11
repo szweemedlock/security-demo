@@ -1,0 +1,15 @@
+server:
+  port: 13000
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.100.5:3306/test?serverTimezone=UTC&useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: admin
+    hikari:
+      max-lifetime: 1800000
+      minimum-idle: 10
+      connection-timeout: 30000
+      idle-timeout: 600000
+  application:
+    name: security-demo
