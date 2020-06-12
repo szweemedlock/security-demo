@@ -2,7 +2,7 @@ package com.xavier.spring.securitydemo.provider;
 
 import com.xavier.spring.securitydemo.config.CustomAuthenticationDetails;
 import com.xavier.spring.securitydemo.exception.VerificationCodeException;
-import com.xavier.spring.securitydemo.service.impl.UsersServiceImpl;
+import com.xavier.spring.securitydemo.service.IUsersService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
-    public CustomAuthenticationProvider(UsersServiceImpl usersService) {
+    public CustomAuthenticationProvider(IUsersService usersService) {
         this.setUserDetailsService(usersService);
     }
 

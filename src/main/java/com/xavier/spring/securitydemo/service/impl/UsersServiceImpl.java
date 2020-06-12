@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ import java.util.Objects;
  */
 @Service
 @Transactional(rollbackFor = {Exception.class})
-public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements IUsersService, UserDetailsService {
+public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users> implements IUsersService {
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
