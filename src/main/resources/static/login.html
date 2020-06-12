@@ -23,7 +23,7 @@
 <body>
     <div class="test">
         <h1>Browser Default</h1>
-        <form class="form-horizontal" action="/login" method="post">
+        <form class="form-horizontal" action="/auth/form" method="post">
             <div class="form-group">
                 <label for="inputEmail3" class="col-sm-2 control-label">Username</label>
                 <div class="col-sm-10">
@@ -37,10 +37,10 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="imageCode" class="col-sm-2 control-label">AuthCode</label>
+                <label for="captcha" class="col-sm-2 control-label">AuthCode</label>
                 <div class="col-sm-10" style="display: flex">
-                    <input type="text" name="imageCode" class="form-control" id="imageCode" placeholder="Auth code">
-                    <img src="/code/image" alt="">
+                    <input type="text" name="captcha" class="form-control" id="captcha" placeholder="captcha">
+                    <img src="/captcha.jpg" alt="captcha" height="35px" width="120px">
                 </div>
             </div>
             <div class="form-group">

@@ -3,11 +3,14 @@ package com.xavier.spring.securitydemo.config;
 import com.google.code.kaptcha.Producer;
 import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
+import com.xavier.spring.securitydemo.filter.VerificationCodeFilter;
+import com.xavier.spring.securitydemo.handler.CustomAuthenticationFailureHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.PrintWriter;
 import java.util.Properties;
@@ -24,27 +27,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/admin/api/**").hasRole("ADMIN")
                 .antMatchers("/user/api/**").hasRole("USER")
-                .antMatchers("/app/api/**").permitAll()
+                // 放开验证码权限
+                .antMatchers("/app/api/**", "/captcha.jpg").permitAll()
+                .anyRequest().authenticated()
                 .and()
+                .csrf().disable()
                 .formLogin()
                 .loginPage("/login.html")
                 // 制定处理登陆请求的路径
-                .loginProcessingUrl("/login")
+                .loginProcessingUrl("/auth/form").permitAll()
                 //
                 .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
                     httpServletResponse.setContentType("application/json;charset=utf-8");
                     PrintWriter writer = httpServletResponse.getWriter();
                     writer.write("{\"message\":\"Hello\"}");
                 })
-                .failureHandler((httpServletRequest, httpServletResponse, e) -> {
-                    httpServletResponse.setContentType("application/json;charset=utf-8");
-                    httpServletResponse.setStatus(401);
-                    PrintWriter writer = httpServletResponse.getWriter();
-                    writer.write("{\"message\": \"" + e.getMessage() + "\"}");
-                })
-                .permitAll()
-                .and()
-                .csrf().disable();
+                .failureHandler(new CustomAuthenticationFailureHandler());
+        // 将自定义的过滤器添加在用户认证之前
+        http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
