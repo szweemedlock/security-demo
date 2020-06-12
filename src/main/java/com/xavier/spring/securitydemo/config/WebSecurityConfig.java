@@ -5,13 +5,18 @@ import com.google.code.kaptcha.impl.DefaultKaptcha;
 import com.google.code.kaptcha.util.Config;
 import com.xavier.spring.securitydemo.filter.VerificationCodeFilter;
 import com.xavier.spring.securitydemo.handler.CustomAuthenticationFailureHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationDetailsSource;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.util.Properties;
 
@@ -20,6 +25,12 @@ import java.util.Properties;
  */
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> customAuthenticationDetailsSource;
+
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -33,6 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .formLogin()
+                // 应用 authenticationDetailSource
+                .authenticationDetailsSource(customAuthenticationDetailsSource)
                 .loginPage("/login.html")
                 // 制定处理登陆请求的路径
                 .loginProcessingUrl("/auth/form").permitAll()
@@ -44,12 +57,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 })
                 .failureHandler(new CustomAuthenticationFailureHandler());
         // 将自定义的过滤器添加在用户认证之前
-        http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
+        auth.authenticationProvider(authenticationProvider);
     }
 
     /**
