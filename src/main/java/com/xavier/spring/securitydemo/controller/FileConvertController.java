@@ -21,7 +21,7 @@ public class FileConvertController {
 
     @GetMapping(value = "view", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<Resource> viewPicture() throws FileNotFoundException {
-        File src = new File("D:\\99_projectfordixin\\test.jpg");
+        File src = new File("D:\\test.jpg");
         InputStream inputStream = new FileInputStream(src);
         InputStreamResource inputStreamResource = new InputStreamResource(inputStream);
         HttpHeaders httpHeaders = new HttpHeaders();

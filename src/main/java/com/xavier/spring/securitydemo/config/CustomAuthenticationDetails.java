@@ -1,7 +1,5 @@
 package com.xavier.spring.securitydemo.config;
 
-import com.xavier.spring.securitydemo.exception.VerificationCodeException;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
