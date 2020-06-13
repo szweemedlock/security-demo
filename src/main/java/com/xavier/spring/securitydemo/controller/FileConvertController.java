@@ -1,7 +1,5 @@
 package com.xavier.spring.securitydemo.controller;
 
-import com.xavier.spring.securitydemo.service.IFileConvertService;
-import org.jodconverter.office.OfficeException;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,22 +18,6 @@ import java.io.InputStream;
 @RestController
 @RequestMapping("file/api")
 public class FileConvertController {
-
-    private final IFileConvertService fileConvertService;
-
-    public FileConvertController(IFileConvertService fileConvertService) {
-        this.fileConvertService = fileConvertService;
-    }
-
-    @GetMapping("toPdf")
-    public ResponseEntity<String> toPdf() throws OfficeException {
-        File src = new File("D:\\99_projectfordixin\\apollo配置中心的使用.docx");
-        File target = new File("D:\\99_projectfordixin\\test.pdf");
-        if (src.exists()) {
-            fileConvertService.toPdf(src, target);
-        }
-        return ResponseEntity.ok().body("Success");
-    }
 
     @GetMapping(value = "view", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<Resource> viewPicture() throws FileNotFoundException {

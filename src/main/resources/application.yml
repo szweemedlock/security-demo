@@ -1,5 +1,5 @@
 server:
-  port: 13000
+  port: 15000
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -13,10 +13,3 @@ spring:
       idle-timeout: 600000
   application:
     name: security-demo
-
-jodconverter:
-  local:
-    enabled: true
-    office-home: C:\Program Files\LibreOffice
-    port-numbers: 8103,8105,8107
-    max-tasks-per-process: 100

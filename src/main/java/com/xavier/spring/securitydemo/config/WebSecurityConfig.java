@@ -15,6 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.session.FindByIndexNameSessionRepository;
+import org.springframework.session.Session;
+import org.springframework.session.security.SpringSessionBackedSessionRegistry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
@@ -25,7 +28,7 @@ import java.util.Properties;
  * @author Karl Xavier
  */
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig<S extends Session> extends WebSecurityConfigurerAdapter {
 
     private final DataSource dataSource;
 
@@ -35,11 +38,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final AuthenticationProvider authenticationProvider;
 
-    public WebSecurityConfig(IUsersService usersService, AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> customAuthenticationDetailsSource, AuthenticationProvider authenticationProvider, DataSource dataSource) {
+    private final FindByIndexNameSessionRepository<S> sessionRepository;
+
+    @Bean
+    public SpringSessionBackedSessionRegistry<S> sessionRegistry() {
+        return new SpringSessionBackedSessionRegistry<>(this.sessionRepository);
+    }
+
+    public WebSecurityConfig(IUsersService usersService
+            , AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> customAuthenticationDetailsSource
+            , AuthenticationProvider authenticationProvider
+            , DataSource dataSource
+            , FindByIndexNameSessionRepository<S> sessionRepository) {
         this.usersService = usersService;
         this.customAuthenticationDetailsSource = customAuthenticationDetailsSource;
         this.authenticationProvider = authenticationProvider;
         this.dataSource = dataSource;
+        this.sessionRepository = sessionRepository;
     }
 
     @Override
@@ -79,7 +94,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 删除指定的 cookie
                 .deleteCookies("JSESSIONID", "remember-me")
                 // 用于注销的处理句柄，允许自定义一些清理策略
-                .addLogoutHandler((request, response, authentication) -> System.out.println("这里可以自定义清理策略"));
+                .addLogoutHandler((request, response, authentication) -> System.out.println("这里可以自定义清理策略"))
+                .and()
+                .sessionManagement(n -> n.maximumSessions(1).sessionRegistry(sessionRegistry()));
         // 将自定义的过滤器添加在用户认证之前
 //        http.addFilterBefore(new VerificationCodeFilter(), UsernamePasswordAuthenticationFilter.class);
     }
